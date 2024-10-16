@@ -224,11 +224,11 @@
 }
 // brush 24
 {
-( -32 -272 160 ) ( -32 -352 160 ) ( -32 -352 80 ) PD/ConcreteWall_clean [ 0 -1 0 -384 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( -32 -272 160 ) ( -32 -352 160 ) ( -32 -352 96 ) PD/ConcreteWall_clean [ 0 -1 0 -384 ] [ 0 0 -1 0 ] 0 0.25 0.25
 ( -32 -352 160 ) ( 72 -352 160 ) ( 72 -352 104 ) PD/ConcreteWall_clean [ 1 0 0 128 ] [ 0 0 -1 0 ] 0 0.25 0.25
 ( -32 -272 160 ) ( 72 -272 160 ) ( 72 -352 160 ) PD/ConcreteWall_clean [ 1 0 0 128 ] [ 0 -1 0 -128 ] 0 0.25 0.25
 ( 72 -272 104 ) ( 72 -272 160 ) ( -32 -272 160 ) PD/ConcreteWall_clean [ -1 0 0 -128 ] [ 0 0 -1 0 ] 0 0.25 0.25
-( 72 -352 104 ) ( 72 -272 104 ) ( -32 -272 80 ) PD/ConcreteWall_clean [ -1 0 0 -128 ] [ 0 -1 0 -128 ] 0 0.25 0.25
+( -32 -272 96 ) ( -32 -352 96 ) ( 72 -352 104 ) PD/ConcreteWall_clean [ -1 0 0 -128 ] [ 0 -1 0 -128 ] 0 0.25 0.25
 ( 72 -352 160 ) ( 72 -272 160 ) ( 72 -272 104 ) PD/ConcreteWall_clean [ 0 1 0 384 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 // brush 25
@@ -2642,7 +2642,7 @@
 // entity 10
 {
 "classname" "info_player_start"
-"origin" "182 -298 70"
+"origin" "182 -298 62"
 }
 // entity 11
 {
@@ -2688,7 +2688,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2704,7 +2704,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2720,7 +2720,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2736,7 +2736,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2752,7 +2752,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2768,7 +2768,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2784,7 +2784,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2800,7 +2800,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2816,7 +2816,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2832,7 +2832,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2879,7 +2879,7 @@
 {
 "classname" "world_Activator"
 "RefId" "PD_ChestMarker"
-"Name" ""
+"Name" "PD_ChestMarker"
 "Script" ""
 // brush 0
 {
@@ -2895,7 +2895,7 @@
 {
 "classname" "world_Activator"
 "RefId" "PD_ChestMarker"
-"Name" ""
+"Name" "PD_ChestMarker"
 "Script" ""
 // brush 0
 {
@@ -2911,7 +2911,7 @@
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
-"RefId" ""
+"RefId" "PD_EnemySpawn"
 "Script" ""
 // brush 0
 {
@@ -2927,7 +2927,7 @@
 {
 "classname" "world_Activator"
 "RefId" "PD_ChestMarker"
-"Name" ""
+"Name" "PD_ChestMarker"
 "Script" ""
 // brush 0
 {
@@ -2943,7 +2943,7 @@
 {
 "classname" "world_Activator"
 "RefId" "PD_ChestMarker"
-"Name" ""
+"Name" "PD_ChestMarker"
 "Script" ""
 // brush 0
 {
@@ -2959,7 +2959,7 @@
 {
 "classname" "world_Activator"
 "RefId" "PD_ChestMarker"
-"Name" ""
+"Name" "PD_ChestMarker"
 "Script" ""
 // brush 0
 {
@@ -2975,4 +2975,97 @@
 {
 "classname" "info_player_start"
 "origin" "10 -310 62"
+}
+// entity 40
+{
+"classname" "world_Activator"
+"RefId" "PD_JumpPad"
+"Name" "Jump Pad"
+// brush 0
+{
+( -328 -96 0 ) ( -328 -95 0 ) ( -328 -96 1 ) __TB_empty [ 0 -1 0 -64 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( -328 -96 0 ) ( -328 -96 1 ) ( -327 -96 0 ) __TB_empty [ 1 0 0 -32 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( -328 -96 0 ) ( -327 -96 0 ) ( -328 -95 0 ) __TB_empty [ -1 0 0 32 ] [ 0 -1 0 -64 ] 0 0.25 0.25
+( -296 -64 8 ) ( -296 -63 8 ) ( -295 -64 8 ) __TB_empty [ 1 0 0 -32 ] [ 0 -1 0 -64 ] 0 0.25 0.25
+( -296 -64 8 ) ( -295 -64 8 ) ( -296 -64 9 ) __TB_empty [ -1 0 0 32 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( -296 -64 8 ) ( -296 -64 9 ) ( -296 -63 8 ) __TB_empty [ 0 1 0 64 ] [ 0 0 -1 0 ] 0 0.25 0.25
+}
+}
+// entity 41
+{
+"classname" "world_Activator"
+"RefId" "PD_JumpPad"
+"Name" "Jump Pad"
+// brush 0
+{
+( 656 0 184 ) ( 656 1 184 ) ( 656 0 185 ) __TB_empty [ 0 -1 0 -64 ] [ 0 0 -1 96 ] 0 0.25 0.25
+( 656 0 184 ) ( 656 0 185 ) ( 657 0 184 ) __TB_empty [ 1 0 0 0 ] [ 0 0 -1 96 ] 0 0.25 0.25
+( 656 0 184 ) ( 657 0 184 ) ( 656 1 184 ) __TB_empty [ -1 0 0 0 ] [ 0 -1 0 -64 ] 0 0.25 0.25
+( 688 32 192 ) ( 688 33 192 ) ( 689 32 192 ) __TB_empty [ 1 0 0 0 ] [ 0 -1 0 -64 ] 0 0.25 0.25
+( 688 32 192 ) ( 689 32 192 ) ( 688 32 193 ) __TB_empty [ -1 0 0 0 ] [ 0 0 -1 96 ] 0 0.25 0.25
+( 688 32 192 ) ( 688 32 193 ) ( 688 33 192 ) __TB_empty [ 0 1 0 64 ] [ 0 0 -1 96 ] 0 0.25 0.25
+}
+}
+// entity 42
+{
+"classname" "world_Activator"
+"RefId" "PD_ChestMarker"
+"Name" "PD_ChestMarker"
+"Script" ""
+// brush 0
+{
+( 656 80 188 ) ( 656 80 189 ) ( 656 79 188 ) __TB_empty [ -1.8369701987210297e-16 -1 0 32 ] [ 0 0 -1 16 ] 0 0.25 0.25
+( 680 64 196 ) ( 680 64 197 ) ( 681 64 196 ) __TB_empty [ 1 -1.8369701987210297e-16 0 -96 ] [ 0 0 -1 16 ] 0 0.25 0.25
+( 664 80 184 ) ( 664 79 184 ) ( 665 80 184 ) __TB_empty [ 1.8369701987210297e-16 1 0 -32 ] [ -1 1.8369701987210297e-16 0 96 ] 270 0.25 0.25
+( 680 64 200 ) ( 681 64 200 ) ( 680 63 200 ) __TB_empty [ -1.8369701987210297e-16 -1 0 32 ] [ -1 1.8369701987210297e-16 0 96 ] 90 0.25 0.25
+( 664 80 188 ) ( 665 80 188 ) ( 664 80 189 ) __TB_empty [ -1 1.8369701987210297e-16 0 96 ] [ 0 0 -1 16 ] 0 0.25 0.25
+( 688 64 196 ) ( 688 63 196 ) ( 688 64 197 ) __TB_empty [ 1.8369701987210297e-16 1 0 -32 ] [ 0 0 -1 16 ] 0 0.25 0.25
+}
+}
+// entity 43
+{
+"classname" "world_Activator"
+"Name" "PD_EnemySpawn"
+"RefId" "PD_EnemySpawn"
+"Script" ""
+// brush 0
+{
+( 176 0 192 ) ( 176 1 192 ) ( 176 0 193 ) __TB_empty [ 0 -1 0 -32 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( 176 0 192 ) ( 176 0 193 ) ( 177 0 192 ) __TB_empty [ 1 0 0 -32 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( 176 0 184 ) ( 177 0 184 ) ( 176 1 184 ) __TB_empty [ -1 0 0 32 ] [ 0 -1 0 -32 ] 0 0.25 0.25
+( 184 16 212 ) ( 184 17 212 ) ( 185 16 212 ) __TB_empty [ 1 0 0 -32 ] [ 0 -1 0 -32 ] 0 0.25 0.25
+( 184 16 200 ) ( 185 16 200 ) ( 184 16 201 ) __TB_empty [ -1 0 0 32 ] [ 0 0 -1 0 ] 0 0.25 0.25
+( 192 16 200 ) ( 192 16 201 ) ( 192 17 200 ) __TB_empty [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 0.25 0.25
+}
+}
+// entity 44
+{
+"classname" "world_Activator"
+"RefId" "PD_JumpPad"
+"Name" "Jump Pad"
+// brush 0
+{
+( -40 -936 200 ) ( -40 -935 200 ) ( -40 -936 201 ) __TB_empty [ 0 -1 0 32 ] [ 0 0 -1 32 ] 0 0.25 0.25
+( -40 -936 200 ) ( -40 -936 201 ) ( -39 -936 200 ) __TB_empty [ 1 0 0 96 ] [ 0 0 -1 32 ] 0 0.25 0.25
+( -40 -936 200 ) ( -39 -936 200 ) ( -40 -935 200 ) __TB_empty [ -1 0 0 -96 ] [ 0 -1 0 32 ] 0 0.25 0.25
+( -8 -904 208 ) ( -8 -903 208 ) ( -7 -904 208 ) __TB_empty [ 1 0 0 96 ] [ 0 -1 0 32 ] 0 0.25 0.25
+( -8 -904 208 ) ( -7 -904 208 ) ( -8 -904 209 ) __TB_empty [ -1 0 0 -96 ] [ 0 0 -1 32 ] 0 0.25 0.25
+( -8 -904 208 ) ( -8 -904 209 ) ( -8 -903 208 ) __TB_empty [ 0 1 0 -32 ] [ 0 0 -1 32 ] 0 0.25 0.25
+}
+}
+// entity 45
+{
+"classname" "world_Activator"
+"RefId" "PD_ChestMarker"
+"Name" "PD_ChestMarker"
+"Script" ""
+// brush 0
+{
+( -192 -584 160 ) ( -192 -583 160 ) ( -192 -584 161 ) __TB_empty [ 0 -1 0 0 ] [ 0 0 -1 -32 ] 0 0.25 0.25
+( -192 -592 160 ) ( -192 -592 161 ) ( -191 -592 160 ) __TB_empty [ 1 0 0 96 ] [ 0 0 -1 -32 ] 0 0.25 0.25
+( -192 -584 160 ) ( -191 -584 160 ) ( -192 -583 160 ) __TB_empty [ -1 0 0 -96 ] [ 0 -1 0 0 ] 0 0.25 0.25
+( -176 -568 176 ) ( -176 -567 176 ) ( -175 -568 176 ) __TB_empty [ 1 0 0 96 ] [ 0 -1 0 0 ] 0 0.25 0.25
+( -176 -560 168 ) ( -175 -560 168 ) ( -176 -560 169 ) __TB_empty [ -1 0 0 -96 ] [ 0 0 -1 -32 ] 0 0.25 0.25
+( -176 -568 168 ) ( -176 -568 169 ) ( -176 -567 168 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 -32 ] 0 0.25 0.25
+}
 }
