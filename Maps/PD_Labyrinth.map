@@ -2668,7 +2668,7 @@
 }
 // entity 24
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2684,7 +2684,7 @@
 }
 // entity 25
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2700,7 +2700,7 @@
 }
 // entity 26
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2716,7 +2716,7 @@
 }
 // entity 27
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2732,7 +2732,7 @@
 }
 // entity 28
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2764,7 +2764,7 @@
 }
 // entity 30
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2812,7 +2812,7 @@
 }
 // entity 33
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2844,7 +2844,7 @@
 }
 // entity 35
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2876,7 +2876,7 @@
 }
 // entity 37
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2892,7 +2892,7 @@
 }
 // entity 38
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2924,7 +2924,7 @@
 }
 // entity 40
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2952,5 +2952,21 @@
 ( -564 -648 44 ) ( -564 -649 44 ) ( -565 -648 44 ) __TB_empty [ -1 1.2246467991473532e-16 0 16 ] [ 1.2246467991473532e-16 1 0 -96 ] 180 0.25 0.25
 ( -556 -632 24 ) ( -556 -632 25 ) ( -557 -632 24 ) __TB_empty [ -1 1.2246467991473532e-16 0 16 ] [ 0 0 -1 0 ] 180 0.25 0.25
 ( -560 -632 24 ) ( -560 -633 24 ) ( -560 -632 25 ) __TB_empty [ 1.2246467991473532e-16 1 0 -96 ] [ 0 0 -1 0 ] 180 0.25 0.25
+}
+}
+// entity 42
+{
+"classname" "world_Container"
+"RefId" "PD_ChestMarker"
+"Name" "PD_ChestMarker"
+"Script" ""
+// brush 0
+{
+( 632 -896 20 ) ( 632 -896 21 ) ( 632 -897 20 ) __TB_empty [ -1.8369701987210297e-16 -1 0 96 ] [ 0 0 -1 112 ] 0 0.25 0.25
+( 656 -912 28 ) ( 656 -912 29 ) ( 657 -912 28 ) __TB_empty [ 1 -1.8369701987210297e-16 0 0 ] [ 0 0 -1 112 ] 0 0.25 0.25
+( 640 -896 20 ) ( 640 -897 20 ) ( 641 -896 20 ) __TB_empty [ 1.8369701987210297e-16 1 0 -96 ] [ -1 1.8369701987210297e-16 0 0 ] 270 0.25 0.25
+( 656 -912 36 ) ( 657 -912 36 ) ( 656 -913 36 ) __TB_empty [ -1.8369701987210297e-16 -1 0 96 ] [ -1 1.8369701987210297e-16 0 0 ] 90 0.25 0.25
+( 640 -896 20 ) ( 641 -896 20 ) ( 640 -896 21 ) __TB_empty [ -1 1.8369701987210297e-16 0 0 ] [ 0 0 -1 112 ] 0 0.25 0.25
+( 664 -912 28 ) ( 664 -913 28 ) ( 664 -912 29 ) __TB_empty [ 1.8369701987210297e-16 1 0 -96 ] [ 0 0 -1 112 ] 0 0.25 0.25
 }
 }

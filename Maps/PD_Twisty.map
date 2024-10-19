@@ -2877,7 +2877,7 @@
 }
 // entity 33
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2893,7 +2893,7 @@
 }
 // entity 34
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2925,7 +2925,7 @@
 }
 // entity 36
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2941,7 +2941,7 @@
 }
 // entity 37
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -2957,7 +2957,7 @@
 }
 // entity 38
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -3008,7 +3008,7 @@
 }
 // entity 42
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
@@ -3055,7 +3055,7 @@
 }
 // entity 45
 {
-"classname" "world_Activator"
+"classname" "world_Container"
 "RefId" "PD_ChestMarker"
 "Name" "PD_ChestMarker"
 "Script" ""
