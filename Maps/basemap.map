@@ -5,6 +5,8 @@
 "mapversion" "220"
 "_tb_textures" "textures;textures\PD"
 "classname" "worldspawn"
+"FakeExterior" "1"
+"HasWater" "0"
 // brush 0
 {
 ( 1024 -1024 0 ) ( 1024 -1023 0 ) ( 1024 -1024 1 ) skip [ 6.123233995736766e-17 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
