@@ -1,3 +1,4 @@
+local async = require('openmw.async')
 local util = require('openmw.util')
 local world = require('openmw.world')
 
@@ -10,8 +11,11 @@ local cells = {
   "claustro",
 }
 
-local CHUNK_SIZE = 6240
-local NUM_CHUNKS = 5
+local CHUNK_SIZE = 6144
+local NUM_CHUNKS = 7
+local BATCH_MAX = 50
+
+local SPAWN_DELAY = 1
 
 local CursorPosition = util.vector3(0, 0, 0)
 
@@ -60,7 +64,7 @@ end
 --- Finds the next available chunk position that hasn't been used.
 -- @return string, util.vector3 The direction and position of the next available chunk.
 local function getNextAvailableChunkPosition()
-  -- If UsedChunkPositions is empty, start at the origin
+
   if #UsedChunkPositions == 0 then
     local direction = getNextChunkDirection()
     local newPosition = getNextChunkPosition(direction, util.vector3(0, 0, 0))
@@ -68,13 +72,11 @@ local function getNextAvailableChunkPosition()
     return direction, newPosition
   end
 
-  -- Create a copy of UsedChunkPositions
   local positionsCopy = {}
   for _, pos in ipairs(UsedChunkPositions) do
     table.insert(positionsCopy, pos)
   end
 
-  -- Randomly check positions around each used chunk
   while #positionsCopy > 0 do
     local posIndex = math.random(#positionsCopy)
     local usedPosition = table.remove(positionsCopy, posIndex)
@@ -85,7 +87,6 @@ local function getNextAvailableChunkPosition()
       local direction = table.remove(directions, dirIndex)
       local newPosition = getNextChunkPosition(direction, usedPosition)
 
-      -- Check if this new position is already used
       local isUsed = false
       for _, checkPosition in ipairs(UsedChunkPositions) do
         if newPosition.x == checkPosition.x and newPosition.y == checkPosition.y then
@@ -94,7 +95,6 @@ local function getNextAvailableChunkPosition()
         end
       end
 
-      -- If not used, we've found our new position
       if not isUsed then
         table.insert(UsedChunkPositions, newPosition)
         return direction, newPosition
@@ -102,7 +102,6 @@ local function getNextAvailableChunkPosition()
     end
   end
 
-  -- If we've checked all positions and found none, something's wrong
   error("No available positions found. This should never happen!")
 end
 
@@ -112,27 +111,47 @@ local function clearDungeon()
       UsedChunkPositions = {}
 end
 
+local function spawnChunk()
+
+  local templateCell = cells[math.random(#cells)]
+
+  local targetCell = world.players[1].cell.name
+
+  generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
+
+  local direction, nextPos = getNextAvailableChunkPosition()
+
+  -- print("Next position will be: ", nextPos.x, nextPos.y, ", used direction was: ", direction)
+
+  CursorPosition = nextPos
+end
+
 local function generateDungeon()
   clearDungeon()
 
   table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
 
-  local targetCell = world.players[1].cell.name
+  if NUM_CHUNKS <= BATCH_MAX then
+    -- If we have 100 or fewer chunks, spawn them all immediately
+    for _ = 1, NUM_CHUNKS do
+      spawnChunk()
+    end
+  else
+    -- If we have more than 100 chunks, spawn them in batches
+    local batchSize = math.min(BATCH_MAX, NUM_CHUNKS)
+    local numBatches = math.ceil(NUM_CHUNKS / batchSize)
 
-  for _=0, NUM_CHUNKS do
+    for batch = 1, numBatches do
+      local startChunk = (batch - 1) * batchSize + 1
+      local endChunk = math.min(batch * batchSize, NUM_CHUNKS)
 
-    local templateCell = cells[math.random(#cells)]
-
-    generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
-
-    local direction, nextPos = getNextAvailableChunkPosition()
-
-    print("Next position will be: ", nextPos.x, nextPos.y, ", used direction was: ", direction)
-
-    CursorPosition = nextPos
-
+      async:newUnsavableSimulationTimer(batch * SPAWN_DELAY, function()
+                                          for _= startChunk, endChunk do
+                                            spawnChunk()
+                                          end
+      end)
+    end
   end
-
 end
 
 return {
