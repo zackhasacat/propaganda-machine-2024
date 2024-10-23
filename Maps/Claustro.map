@@ -7419,6 +7419,11 @@
 "_tb_name" "Window-cave"
 "_tb_id" "3"
 "_tb_linked_group_id" "{b8f6738e-5e2b-4f69-9757-4f4cd27b2fea}"
+}
+// entity 2
+{
+"classname" "world_Detail"
+"_tb_group" "3"
 // brush 0
 {
 ( -344 -184 330 ) ( -344 -188 328 ) ( -344 -188 326 ) Tx_dragonstatue_metal_1 [ 0 -1 0 10.624756 ] [ 0 0 -1 0 ] 0 0.25 0.25
@@ -7539,13 +7544,18 @@
 ( -352 -204 322 ) ( -352 -200 324 ) ( -352 -200 322 ) Tx_dragonstatue_metal_1 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 2
+// entity 3
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
 "_tb_name" "Window Grill"
 "_tb_id" "7"
 "_tb_linked_group_id" "{16f375c2-a208-4a0c-a020-79f2e04de713}"
+}
+// entity 4
+{
+"classname" "world_Detail"
+"_tb_group" "7"
 // brush 0
 {
 ( -135 -331 201 ) ( -135 -334 201 ) ( -135 -334 199 ) Tx_dragonstatue_metal_1 [ 0 -1 0 -15037.343 ] [ 0 0 -1 4967.5215 ] 0 0.020511135 0.034077942
@@ -7660,7 +7670,7 @@
 ( -134 -329 199 ) ( -134 -320 199 ) ( -134 -320 196 ) Tx_dragonstatue_metal_1 [ 0 1 0 -15037.343 ] [ 0 0 -1 4967.5215 ] 0 0.020511135 0.034077942
 }
 }
-// entity 3
+// entity 5
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7676,7 +7686,7 @@
 ( 80 920 32 ) ( 80 936 32 ) ( 80 936 0 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 -16 ] 270 0.25 0.25
 }
 }
-// entity 4
+// entity 6
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7692,7 +7702,7 @@
 ( -48 248 -72 ) ( -48 264 -72 ) ( -48 264 -104 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 -16 ] 270 0.25 0.25
 }
 }
-// entity 5
+// entity 7
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7708,7 +7718,7 @@
 ( 56 -72 -72 ) ( 56 -56 -72 ) ( 56 -56 -104 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 -16 ] 270 0.25 0.25
 }
 }
-// entity 6
+// entity 8
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7724,7 +7734,7 @@
 ( 32 48 -72 ) ( 32 64 -72 ) ( 32 64 -104 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 -16 ] 270 0.25 0.25
 }
 }
-// entity 7
+// entity 9
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7740,7 +7750,7 @@
 ( -672 -8 144 ) ( -672 8 144 ) ( -672 8 112 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 90 0.25 0.25
 }
 }
-// entity 8
+// entity 10
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7756,7 +7766,7 @@
 ( -208 -208 144 ) ( -208 -192 144 ) ( -208 -192 112 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 0 0.25 0.25
 }
 }
-// entity 9
+// entity 11
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7772,7 +7782,7 @@
 ( -440 -384 216 ) ( -440 -368 216 ) ( -440 -368 184 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 10
+// entity 12
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7788,7 +7798,7 @@
 ( -688 -8 280 ) ( -688 8 280 ) ( -688 8 248 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 11
+// entity 13
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7804,7 +7814,7 @@
 ( -336 120 296 ) ( -336 136 296 ) ( -336 136 264 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 12
+// entity 14
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7820,7 +7830,7 @@
 ( -336 -176 296 ) ( -336 -160 296 ) ( -336 -160 264 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 13
+// entity 15
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7836,7 +7846,7 @@
 ( 152 88 296 ) ( 152 104 296 ) ( 152 104 264 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 14
+// entity 16
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7852,7 +7862,7 @@
 ( 960 48 80 ) ( 960 64 80 ) ( 960 64 48 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 15
+// entity 17
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7868,7 +7878,7 @@
 ( 528 104 168 ) ( 528 120 168 ) ( 528 120 136 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 16
+// entity 18
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7884,7 +7894,7 @@
 ( -72 648 368 ) ( -72 664 368 ) ( -72 664 336 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 17
+// entity 19
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7900,7 +7910,7 @@
 ( 80 112 472 ) ( 80 128 472 ) ( 80 128 440 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 18
+// entity 20
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7916,7 +7926,7 @@
 ( -32 104 472 ) ( -32 120 472 ) ( -32 120 440 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 19
+// entity 21
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7932,7 +7942,7 @@
 ( -24 -408 368 ) ( -24 -392 368 ) ( -24 -392 336 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 20
+// entity 22
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7948,7 +7958,7 @@
 ( -24 -672 152 ) ( -24 -656 152 ) ( -24 -656 120 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 21
+// entity 23
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -7964,7 +7974,7 @@
 ( 72 -248 256 ) ( 72 -232 256 ) ( 72 -232 224 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 16 ] 270 0.25 0.25
 }
 }
-// entity 22
+// entity 24
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -7980,7 +7990,7 @@
 ( -448 232 64 ) ( -448 248 64 ) ( -448 248 48 ) __TB_empty [ 1.8369701987210297e-16 1 0 0 ] [ 0 0 -1 -16 ] 270 0.25 0.25
 }
 }
-// entity 23
+// entity 25
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -7997,7 +8007,7 @@
 ( 104 0 -104 ) ( 104 0 -88 ) ( 104 32 -88 ) __TB_empty [ 3.6739403974420594e-16 1 0 0 ] [ 0 0 -1 -16 ] 180 0.25 0.25
 }
 }
-// entity 24
+// entity 26
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -8014,7 +8024,7 @@
 ( 69.65685424949241 527.029437251523 360 ) ( 80.97056274847708 538.3431457505077 360 ) ( 80.97056274847708 538.3431457505077 344 ) __TB_empty [ 0.707106781186547 0.7071067811865481 0 8.316284 ] [ 0 0 -1 16 ] 0 0.25 0.25
 }
 }
-// entity 25
+// entity 27
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -8031,7 +8041,7 @@
 ( 232 -456 264 ) ( 232 -424 264 ) ( 232 -424 248 ) __TB_empty [ 2.4492935982947064e-16 1 0 0 ] [ 0 0 -1 16 ] 90 0.25 0.25
 }
 }
-// entity 26
+// entity 28
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -8047,7 +8057,7 @@
 ( -352 -288 280 ) ( -352 -272 280 ) ( -352 -272 264 ) __TB_empty [ 1.8369701987210297e-16 1 0 0 ] [ 0 0 -1 16 ] 0 0.25 0.25
 }
 }
-// entity 27
+// entity 29
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -8064,7 +8074,7 @@
 ( 961.8564064605509 169.07179676972447 75 ) ( 969.8564064605509 182.92820323027547 75 ) ( 969.8564064605509 182.92820323027547 59 ) __TB_empty [ 0.5000000000000013 0.8660254037844379 0 -13.394775 ] [ 0 0 -1 28 ] 270 0.25 0.25
 }
 }
-// entity 28
+// entity 30
 {
 "classname" "world_Activator"
 "RefId" ""
@@ -8078,7 +8088,7 @@
 ( -440 -40 360 ) ( -432 48 360 ) ( -432 48 352 ) clip [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 29
+// entity 31
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8087,7 +8097,7 @@
 "_tb_linked_group_id" "{b5f4738e-9aa6-4143-8ec0-555855b9564c}"
 "_tb_transformation" "1 0 0 -48 0 1 0 48 0 0 1 0 0 0 0 1"
 }
-// entity 30
+// entity 32
 {
 "classname" "world_Detail"
 "RefId" "PD_Claustro_Pillar"
@@ -8106,7 +8116,7 @@
 ( -592 -32 256 ) ( -592 -32 376 ) ( -597 -21 376 ) PD/ConcreteWall_clean [ -0.3826834323650897 0.9238795325112868 0 -202.26099 ] [ 0 0 -1 -32 ] 90 0.25 0.25 0 2 0
 }
 }
-// entity 31
+// entity 33
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8114,7 +8124,7 @@
 "_tb_id" "11"
 "_tb_linked_group_id" "{b5f4738e-9aa6-4143-8ec0-555855b9564c}"
 }
-// entity 32
+// entity 34
 {
 "classname" "world_Detail"
 "RefId" "PD_Claustro_Pillar"
@@ -8133,7 +8143,7 @@
 ( -544 -80 256 ) ( -544 -80 376 ) ( -549 -69 376 ) PD/ConcreteWall_clean [ -0.3826834323650897 0.9238795325112868 0 48.59912 ] [ 0 0 -1 -32 ] 180 0.25 0.25 0 2 0
 }
 }
-// entity 33
+// entity 35
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8142,7 +8152,7 @@
 "_tb_linked_group_id" "{b5f4738e-9aa6-4143-8ec0-555855b9564c}"
 "_tb_transformation" "1 0 0 -64 0 1 0 160 0 0 1 0 0 0 0 1"
 }
-// entity 34
+// entity 36
 {
 "classname" "world_Detail"
 "RefId" "PD_Claustro_Pillar"
@@ -8161,7 +8171,7 @@
 ( -608 80 256 ) ( -608 80 376 ) ( -613 91 376 ) PD/ConcreteWall_clean [ -0.3826834323650897 0.9238795325112868 0 -128.65076 ] [ 0 0 -1 -32 ] 180 0.25 0.25 0 2 0
 }
 }
-// entity 35
+// entity 37
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8170,7 +8180,7 @@
 "_tb_linked_group_id" "{b5f4738e-9aa6-4143-8ec0-555855b9564c}"
 "_tb_transformation" "1 0 0 272 0 1 0 160 0 0 1 0 0 0 0 1"
 }
-// entity 36
+// entity 38
 {
 "classname" "world_Detail"
 "RefId" "PD_Claustro_Pillar"
@@ -8189,7 +8199,7 @@
 ( -272 80 256 ) ( -272 80 376 ) ( -277 91 376 ) PD/ConcreteWall_clean [ -0.3826834323650897 0.9238795325112868 0 385.67578 ] [ 0 0 -1 -32 ] 0 0.25 0.25 0 2 0
 }
 }
-// entity 37
+// entity 39
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8197,7 +8207,7 @@
 "_tb_id" "17"
 "_tb_linked_group_id" "{5b6bd81e-ab6e-4ab4-ba16-41ac3d8361d2}"
 }
-// entity 38
+// entity 40
 {
 "classname" "world_Detail"
 "Material_SmoothShading" "1"
@@ -8320,7 +8330,7 @@
 ( 83 -53 384 ) ( 83 -53 264 ) ( 88 -64 264 ) PD/ConcreteWall_clean [ -0.3826834323650897 0.9238795325112868 0 -9.943237 ] [ 0 0 -1 0 ] 90 0.25 0.25
 }
 }
-// entity 39
+// entity 41
 {
 "classname" "func_group"
 "_tb_type" "_tb_layer"
@@ -8450,7 +8460,7 @@
 ( -968 784 416 ) ( -968 784 536 ) ( -973 795 536 ) PD/ConcreteWall_clean [ -0.3826834323650897 0.9238795325112868 0 -209.35938 ] [ 0 0 -1 96 ] 180 0.25 0.25
 }
 }
-// entity 40
+// entity 42
 {
 "classname" "world_Activator"
 "RefId" "PD_JumpPad"
@@ -8466,7 +8476,7 @@
 ( -776 800 8 ) ( -776 832 8 ) ( -776 832 0 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 41
+// entity 43
 {
 "classname" "world_Container"
 "RefId" "PD_ChestMarker"
@@ -8483,7 +8493,7 @@
 ( -776 776 16 ) ( -776 792 16 ) ( -776 792 0 ) __TB_empty [ 1.8369701987210297e-16 1 0 0 ] [ 0 0 -1 16 ] 0 0.25 0.25
 }
 }
-// entity 42
+// entity 44
 {
 "classname" "world_Activator"
 "Name" "PD_EnemySpawn"
@@ -8500,7 +8510,7 @@
 ( -792 752 32 ) ( -792 768 32 ) ( -792 768 0 ) __TB_empty [ 0 1 0 0 ] [ 0 0 -1 -16 ] 0 0.25 0.25
 }
 }
-// entity 43
+// entity 45
 {
 "classname" "world_Activator"
 "Name" "PD_DoorMarker"
@@ -8517,7 +8527,7 @@
 ( 128 1008 144 ) ( 128 1040 144 ) ( 128 1040 16 ) skip [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 44
+// entity 46
 {
 "classname" "world_Activator"
 "Name" "PD_DoorMarker"
@@ -8534,7 +8544,7 @@
 ( 1040 -128 144 ) ( 1040 128 144 ) ( 1040 128 48 ) skip [ -1.6081226496766366e-16 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 45
+// entity 47
 {
 "classname" "world_Activator"
 "Name" "PD_DoorMarker"
@@ -8551,7 +8561,7 @@
 ( 128 -1040 144 ) ( 128 -1008 144 ) ( 128 -1008 16 ) skip [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 46
+// entity 48
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8561,7 +8571,7 @@
 "_tb_transformation" "1 0 0 -712 0 1 0 704 0 0 1 104 0 0 0 1"
 "_tb_layer" "5"
 }
-// entity 47
+// entity 49
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8602,7 +8612,7 @@
 ( -920 608 456 ) ( -920 607 456 ) ( -920 608 457 ) PD/ConcreteWall_clean [ 1.2656542480726785e-14 1.0000000000000002 0 0 ] [ 0 0 -1 0 ] 270 0.25 0.25
 }
 }
-// entity 48
+// entity 50
 {
 "classname" "world_Activator"
 "Name" "PD_DoorMarker"
@@ -8619,7 +8629,7 @@
 ( -1008 -128 144 ) ( -1008 128 144 ) ( -1008 128 16 ) skip [ -1.6081226496766366e-16 1 0 0 ] [ 0 0 -1 0 ] 0 0.25 0.25
 }
 }
-// entity 49
+// entity 51
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8748,7 +8758,7 @@
 ( -956 738 496 ) ( -956 742 498 ) ( -956 742 496 ) Tx_dragonstatue_metal_1 [ 0 1 0 7.9973145 ] [ 0 0 -1 24 ] 180 0.25 0.25
 }
 }
-// entity 50
+// entity 52
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -8794,7 +8804,7 @@
 ( -928 688 504 ) ( -928 688 512 ) ( -936 712 512 ) PD/ConcreteWall_dark [ 0.41665471049321345 -0.9090648228942845 0 -7.85791 ] [ 0 0 -1.0000000000000002 160 ] 90 0.25 0.25
 }
 }
-// entity 51
+// entity 53
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
