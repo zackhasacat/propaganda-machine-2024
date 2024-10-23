@@ -2,14 +2,16 @@ local util = require('openmw.util')
 local world = require('openmw.world')
 
 local cells = {
-  "PD_Twisty",
-  "PD_Twisty_Alt",
-  "Claustro",
+  "pd_twisty",
+  "pd_twisty_alt",
+  "pd_zen",
+  "pd_shaft",
+  "pd_labyrinth",
+  "claustro",
 }
 
 local CHUNK_SIZE = 6240
 local NUM_CHUNKS = 5
--- local CHUNK_SIZE = util.vector2(CHUNK_SIZE, CHUNK_SIZE)
 
 local CursorPosition = util.vector3(0, 0, 0)
 
@@ -110,8 +112,7 @@ local function clearDungeon()
       UsedChunkPositions = {}
 end
 
-local function generateDungeon(cellId)
-  assert(type(cellId) == "string", "First argument must be a string!")
+local function generateDungeon()
   clearDungeon()
 
   table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
@@ -120,7 +121,9 @@ local function generateDungeon(cellId)
 
   for _=0, NUM_CHUNKS do
 
-    generateCell{ cellId = cellId, targetCell = targetCell, cursorPosition = CursorPosition }
+    local templateCell = cells[math.random(#cells)]
+
+    generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
 
     local direction, nextPos = getNextAvailableChunkPosition()
 
@@ -129,8 +132,6 @@ local function generateDungeon(cellId)
     CursorPosition = nextPos
 
   end
-
-  for k, v in ipairs(UsedChunkPositions) do print(k, v) end
 
 end
 
