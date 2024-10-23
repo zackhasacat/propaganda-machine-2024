@@ -7,8 +7,9 @@ local cells = {
   "Claustro",
 }
 
-local AXIS_LENGTH = 6240
--- local CHUNK_SIZE = util.vector2(AXIS_LENGTH, AXIS_LENGTH)
+local CHUNK_SIZE = 6240
+local NUM_CHUNKS = 5
+-- local CHUNK_SIZE = util.vector2(CHUNK_SIZE, CHUNK_SIZE)
 
 local CursorPosition = util.vector3(0, 0, 0)
 
@@ -27,8 +28,6 @@ local function generateCell(cellData)
         world.createObject(object.recordId)
           :teleport(cellData.targetCell, object.position + cellData.cursorPosition, object.rotation)
       end
-
-      table.insert(UsedChunkPositions, cellData.cursorPosition)
 end
 
 --- Determines the cardinal direction for the next chunk.
@@ -40,67 +39,105 @@ end
 
 --- Calculates the new cursor position based on the given direction.
 -- @param direction string The cardinal direction: "north", "south", "east", or "west".
+-- @param position util.vector3 The reference position to move from
 -- @return util.vector3 The new cursor position.
-local function getNextChunkPosition(direction)
-
+local function getNextChunkPosition(direction, position)
   assert(direction == "north" or direction == "south" or direction == "east" or direction == "west", "Invalid direction provided: " .. direction)
 
   if direction == "north" then
-    return util.vector3(CursorPosition.x, CursorPosition.y + AXIS_LENGTH, CursorPosition.z)
+    return util.vector3(position.x, position.y + CHUNK_SIZE, position.z)
   elseif direction == "south" then
-    return util.vector3(CursorPosition.x, CursorPosition.y - AXIS_LENGTH, CursorPosition.z)
+    return util.vector3(position.x, position.y - CHUNK_SIZE, position.z)
   elseif direction == "east" then
-    return util.vector3(CursorPosition.x + AXIS_LENGTH, CursorPosition.y, CursorPosition.z)
+    return util.vector3(position.x + CHUNK_SIZE, position.y, position.z)
   elseif direction == "west" then
-    return util.vector3(CursorPosition.x - AXIS_LENGTH, CursorPosition.y, CursorPosition.z)
+    return util.vector3(position.x - CHUNK_SIZE, position.y, position.z)
   end
 end
 
 --- Finds the next available chunk position that hasn't been used.
--- @return util.vector3 The position of the next available chunk.
+-- @return string, util.vector3 The direction and position of the next available chunk.
 local function getNextAvailableChunkPosition()
+  -- If UsedChunkPositions is empty, start at the origin
+  if #UsedChunkPositions == 0 then
+    local direction = getNextChunkDirection()
+    local newPosition = getNextChunkPosition(direction, util.vector3(0, 0, 0))
+    table.insert(UsedChunkPositions, newPosition)
+    return direction, newPosition
+  end
 
-  local function isPositionUsed(position)
-    for _, usedPosition in ipairs(UsedChunkPositions) do
-      if position.x == usedPosition.x and position.y == usedPosition.y then
-        return true
+  -- Create a copy of UsedChunkPositions
+  local positionsCopy = {}
+  for _, pos in ipairs(UsedChunkPositions) do
+    table.insert(positionsCopy, pos)
+  end
+
+  -- Randomly check positions around each used chunk
+  while #positionsCopy > 0 do
+    local posIndex = math.random(#positionsCopy)
+    local usedPosition = table.remove(positionsCopy, posIndex)
+
+    local directions = {"north", "south", "east", "west"}
+    while #directions > 0 do
+      local dirIndex = math.random(#directions)
+      local direction = table.remove(directions, dirIndex)
+      local newPosition = getNextChunkPosition(direction, usedPosition)
+
+      -- Check if this new position is already used
+      local isUsed = false
+      for _, checkPosition in ipairs(UsedChunkPositions) do
+        if newPosition.x == checkPosition.x and newPosition.y == checkPosition.y then
+          isUsed = true
+          break
+        end
+      end
+
+      -- If not used, we've found our new position
+      if not isUsed then
+        table.insert(UsedChunkPositions, newPosition)
+        return direction, newPosition
       end
     end
-    return false
   end
 
-  while true do
-    local direction = getNextChunkDirection()
-    local newPosition = getNextChunkPosition(direction)
+  -- If we've checked all positions and found none, something's wrong
+  error("No available positions found. This should never happen!")
+end
 
-    if not isPositionUsed(newPosition) then
-      table.insert(UsedChunkPositions, newPosition)
-      return newPosition
-    end
-  end
+local function clearDungeon()
+      for _, object in pairs(world.players[1].cell:getAll()) do object:remove() end
+      CursorPosition = util.vector3(0, 0, 0)
+      UsedChunkPositions = {}
 end
 
 local function generateDungeon(cellId)
   assert(type(cellId) == "string", "First argument must be a string!")
+  clearDungeon()
+
+  table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
+
   local targetCell = world.players[1].cell.name
 
-  for _=1, 7 do
+  for _=0, NUM_CHUNKS do
 
     generateCell{ cellId = cellId, targetCell = targetCell, cursorPosition = CursorPosition }
 
-    local nextPos = getNextAvailableChunkPosition()
+    local direction, nextPos = getNextAvailableChunkPosition()
 
-    print("Next position will be: ", nextPos.x, nextPos.y)
+    print("Next position will be: ", nextPos.x, nextPos.y, ", used direction was: ", direction)
 
     CursorPosition = nextPos
 
   end
+
+  for k, v in ipairs(UsedChunkPositions) do print(k, v) end
 
 end
 
 return {
   interfaceName = "s3_Rogue",
   interface = {
+    clearDungeon = clearDungeon,
     generateDungeon = generateDungeon,
   },
 }
