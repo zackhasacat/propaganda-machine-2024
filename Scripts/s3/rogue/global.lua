@@ -143,6 +143,7 @@ local function getNextAvailableChunkPosition()
   error("No available positions found. This should never happen!")
 end
 
+local positionsWithTransitions = {}
 local clearStopFn
 local function clearDungeon(createNew, chunksToGenerate)
   local cellObjects = world.players[1].cell:getAll()
@@ -174,6 +175,7 @@ local function clearDungeon(createNew, chunksToGenerate)
       else
         clearStopFn()
         CursorPosition = util.vector3(0, 0, 0)
+        positionsWithTransitions = {}
         UsedChunkPositions = {}
 
         if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
@@ -182,10 +184,7 @@ local function clearDungeon(createNew, chunksToGenerate)
     DELETE_DELAY)
 end
 
-local function spawnTransitionCell(direction, position)
-
-  local transitionRoomPosition = getTransitionRoomPosition(direction, position)
-
+local function randomTransitionCell(direction)
   local transitionCellTemplate
   local transitionCellIndex
 
@@ -197,8 +196,15 @@ local function spawnTransitionCell(direction, position)
     transitionCellTemplate = verticalTransitions[transitionCellIndex]
   end
 
+  return transitionCellTemplate
+end
+
+local function spawnTransitionCell(direction, position)
+
+  local transitionRoomPosition = getTransitionRoomPosition(direction, position)
+
   generateCell{ targetCell = world.players[1].cell.name,
-                cursorPosition = transitionRoomPosition,  cellId = transitionCellTemplate }
+                cursorPosition = transitionRoomPosition,  cellId = randomTransitionCell(direction) }
 
 end
 
@@ -210,11 +216,51 @@ local function spawnChunk()
 
   generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
 
-  local direction, nextPos = getNextAvailableChunkPosition()
-
-  spawnTransitionCell(direction, nextPos)
+  local _, nextPos = getNextAvailableChunkPosition()
 
   CursorPosition = nextPos
+end
+
+
+local function positionHasTransition(position)
+  for _, usedPosition in pairs(positionsWithTransitions) do
+    if position == usedPosition then return true end
+  end
+
+  return false
+end
+
+local function generateTransitionRooms()
+  positionsWithTransitions[#positionsWithTransitions] = util.vector3(0, 0, 0)
+  for _, position in ipairs(UsedChunkPositions) do
+
+    local directions = { "north", "south", "east", "west" }
+
+    for _, direction in pairs(directions) do
+
+      local adjacentChunkPosition = getNextChunkPosition(direction, position)
+
+      for _, adjacentPosition in ipairs(UsedChunkPositions) do
+
+        if adjacentPosition == adjacentChunkPosition then
+
+          local transitionRoomPosition = getTransitionRoomPosition(direction, adjacentPosition)
+
+          if not positionHasTransition(transitionRoomPosition) then
+
+            generateCell{ cellId = randomTransitionCell(direction),
+                          targetCell = world.players[1].cell.name, cursorPosition = transitionRoomPosition }
+
+            positionsWithTransitions[#positionsWithTransitions + 1] = transitionRoomPosition
+
+          end
+
+        end
+
+      end
+
+    end
+  end
 end
 
 local GenerateStopFn
@@ -229,6 +275,7 @@ local function generateDungeon(chunkData)
 
       if chunksRemaining <= 0 then
         GenerateStopFn()
+        generateTransitionRooms()
       end
 
       local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
