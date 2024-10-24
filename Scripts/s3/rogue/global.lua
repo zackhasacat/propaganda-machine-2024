@@ -1,4 +1,6 @@
-local async = require('openmw.async')
+local core = require('openmw.core')
+local time = require('openmw_aux.time')
+local types = require('openmw.types')
 local util = require('openmw.util')
 local world = require('openmw.world')
 
@@ -12,10 +14,13 @@ local cells = {
 }
 
 local CHUNK_SIZE = 6144
-local NUM_CHUNKS = 7
-local BATCH_MAX = 50
+local NUM_CHUNKS = 500
+local BATCH_MAX = 25
 
-local SPAWN_DELAY = 1
+local SPAWN_DELAY = 1 * time.second
+
+local DELETE_CHUNKS = 300
+local DELETE_DELAY = 0.25 * time.second
 
 local CursorPosition = util.vector3(0, 0, 0)
 
@@ -105,10 +110,50 @@ local function getNextAvailableChunkPosition()
   error("No available positions found. This should never happen!")
 end
 
-local function clearDungeon()
-      for _, object in pairs(world.players[1].cell:getAll()) do object:remove() end
-      CursorPosition = util.vector3(0, 0, 0)
-      UsedChunkPositions = {}
+local clearStopFn
+local function clearDungeon(createNew, chunksToGenerate)
+  local cellObjects = world.players[1].cell:getAll()
+  local numObjects = #cellObjects
+
+  local chunkData = {
+    chunksToGenerate = chunksToGenerate or NUM_CHUNKS,
+  }
+
+  if numObjects == 0 then
+    if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
+    return
+  end
+
+  local numDeleted = 0
+
+  print("Cell currently has: ", numObjects, " objects.")
+
+  clearStopFn = time.runRepeatedly(function()
+      if numDeleted <= numObjects then
+
+        local deleteThisIteration = math.min(DELETE_CHUNKS, numObjects - numDeleted)
+
+        print("Deleting", deleteThisIteration, " objects this iteration")
+
+        for index=numDeleted, numDeleted + deleteThisIteration do
+          local target = cellObjects[index + 1]
+          if target and target.type ~= types.Player then target:remove() end
+        end
+
+        numDeleted = numDeleted + deleteThisIteration + 1
+
+      else
+        print("All objects deleted, cell is clear for paving", numDeleted, numObjects)
+        clearStopFn()
+        CursorPosition = util.vector3(0, 0, 0)
+        UsedChunkPositions = {}
+
+        print("Chunk Data is: ", chunkData)
+
+        if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
+      end
+  end,
+    DELETE_DELAY)
 end
 
 local function spawnChunk()
@@ -126,38 +171,39 @@ local function spawnChunk()
   CursorPosition = nextPos
 end
 
-local function generateDungeon()
-  clearDungeon()
+local GenerateStopFn
+
+local function generateDungeon(chunkData)
+
+  print(chunkData)
 
   table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
 
-  if NUM_CHUNKS <= BATCH_MAX then
-    -- If we have 100 or fewer chunks, spawn them all immediately
-    for _ = 1, NUM_CHUNKS do
-      spawnChunk()
-    end
-  else
-    -- If we have more than 100 chunks, spawn them in batches
-    local batchSize = math.min(BATCH_MAX, NUM_CHUNKS)
-    local numBatches = math.ceil(NUM_CHUNKS / batchSize)
+  local chunksRemaining = chunkData.chunksToGenerate
 
-    for batch = 1, numBatches do
-      local startChunk = (batch - 1) * batchSize + 1
-      local endChunk = math.min(batch * batchSize, NUM_CHUNKS)
+  GenerateStopFn = time.runRepeatedly(function()
 
-      async:newUnsavableSimulationTimer(batch * SPAWN_DELAY, function()
-                                          for _= startChunk, endChunk do
-                                            spawnChunk()
-                                          end
-      end)
-    end
-  end
+      if chunksRemaining <= 0 then
+        GenerateStopFn()
+      end
+
+      local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
+
+      for _=0, math.min(chunksRemaining, BATCH_MAX) do
+        spawnChunk()
+      end
+
+      chunksRemaining = chunksRemaining - chunksThisBatch
+  end,
+    SPAWN_DELAY)
 end
 
 return {
   interfaceName = "s3_Rogue",
   interface = {
     clearDungeon = clearDungeon,
-    generateDungeon = generateDungeon,
   },
+  eventHandlers = {
+    generateDungeon = generateDungeon,
+  }
 }
