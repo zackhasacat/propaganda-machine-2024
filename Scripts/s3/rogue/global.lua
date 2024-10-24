@@ -189,7 +189,7 @@ local function generateDungeon(chunkData)
 
       local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
 
-      for _=0, math.min(chunksRemaining, BATCH_MAX) do
+      for _=1, math.min(chunksRemaining, BATCH_MAX) do
         spawnChunk()
       end
 
