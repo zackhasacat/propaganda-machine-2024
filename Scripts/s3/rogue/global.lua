@@ -4,7 +4,7 @@ local types = require('openmw.types')
 local util = require('openmw.util')
 local world = require('openmw.world')
 
-local cells = {
+local templateCells = {
   "pd_twisty",
   "pd_twisty_alt",
   "pd_zen",
@@ -199,19 +199,6 @@ local function randomTransitionCell(direction)
   return transitionCellTemplate
 end
 
-local function spawnChunk()
-
-  local templateCell = cells[math.random(#cells)]
-
-  local targetCell = world.players[1].cell.name
-
-  generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
-
-  local _, nextPos = getNextAvailableChunkPosition()
-
-  CursorPosition = nextPos
-end
-
 
 local function positionHasTransition(position)
   for _, usedPosition in pairs(positionsWithTransitions) do
@@ -257,6 +244,20 @@ end
 local GenerateStopFn
 local chunksRemaining
 
+local function spawnChunk(isLastChunk)
+
+  local templateCell = templateCells[math.random(#templateCells)]
+
+  local targetCell = world.players[1].cell.name
+
+  generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
+
+  if isLastChunk then return end
+
+  local _, nextPos = getNextAvailableChunkPosition()
+  CursorPosition = nextPos
+end
+
 local function generateTimedChunk()
   if chunksRemaining <= 0 then
     GenerateStopFn()
@@ -265,8 +266,8 @@ local function generateTimedChunk()
 
   local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
 
-  for _ = 1, math.min(chunksRemaining, BATCH_MAX) do
-    spawnChunk()
+  for chunkThisBatch = 1, math.min(chunksRemaining, BATCH_MAX) do
+    spawnChunk(chunkThisBatch - chunksRemaining == 0)
   end
 
   chunksRemaining = chunksRemaining - chunksThisBatch
