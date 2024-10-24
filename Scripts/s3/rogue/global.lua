@@ -255,29 +255,30 @@ local function generateTransitionRooms()
 end
 
 local GenerateStopFn
+local chunksRemaining
+
+local function generateTimedChunk()
+  if chunksRemaining <= 0 then
+    GenerateStopFn()
+    generateTransitionRooms()
+  end
+
+  local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
+
+  for _ = 1, math.min(chunksRemaining, BATCH_MAX) do
+    spawnChunk()
+  end
+
+  chunksRemaining = chunksRemaining - chunksThisBatch
+end
 
 local function generateDungeon(chunkData)
 
   table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
 
-  local chunksRemaining = chunkData.chunksToGenerate
+  chunksRemaining = chunkData.chunksToGenerate
 
-  GenerateStopFn = time.runRepeatedly(function()
-
-      if chunksRemaining <= 0 then
-        GenerateStopFn()
-        generateTransitionRooms()
-      end
-
-      local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
-
-      for _=1, math.min(chunksRemaining, BATCH_MAX) do
-        spawnChunk()
-      end
-
-      chunksRemaining = chunksRemaining - chunksThisBatch
-  end,
-    SPAWN_DELAY)
+  GenerateStopFn = time.runRepeatedly(generateTimedChunk, SPAWN_DELAY)
 end
 
 return {
