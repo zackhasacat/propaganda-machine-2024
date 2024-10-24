@@ -199,15 +199,6 @@ local function randomTransitionCell(direction)
   return transitionCellTemplate
 end
 
-local function spawnTransitionCell(direction, position)
-
-  local transitionRoomPosition = getTransitionRoomPosition(direction, position)
-
-  generateCell{ targetCell = world.players[1].cell.name,
-                cursorPosition = transitionRoomPosition,  cellId = randomTransitionCell(direction) }
-
-end
-
 local function spawnChunk()
 
   local templateCell = cells[math.random(#cells)]
