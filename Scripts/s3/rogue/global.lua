@@ -13,7 +13,22 @@ local cells = {
   "claustro",
 }
 
-local CHUNK_SIZE = 6144
+local verticalTransitions = {
+  "pd_connector_ns_1",
+  "pd_connector_ns_2",
+}
+
+local horizontalTransitions = {
+  "pd_connector_ew_1",
+  "pd_connector_ew_2",
+}
+
+local SCALE_FACTOR = 3
+
+local TRANSITION_SIZE = 512 * SCALE_FACTOR
+local ROOM_SIZE = 2048 * SCALE_FACTOR
+local CHUNK_SIZE = TRANSITION_SIZE + ROOM_SIZE
+
 local NUM_CHUNKS = 500
 local BATCH_MAX = 25
 
@@ -63,6 +78,24 @@ local function getNextChunkPosition(direction, position)
     return util.vector3(position.x + CHUNK_SIZE, position.y, position.z)
   elseif direction == "west" then
     return util.vector3(position.x - CHUNK_SIZE, position.y, position.z)
+  end
+end
+
+--- Calculates the new cursor position based on the given direction.
+-- @param direction string The cardinal direction: "north", "south", "east", or "west".
+-- @param position util.vector3 The reference position to move from
+-- @return util.vector3 Position of the transition room .
+local function getTransitionRoomPosition(direction, position)
+  assert(direction == "north" or direction == "south" or direction == "east" or direction == "west", "Invalid direction provided: " .. direction)
+
+  if direction == "north" then
+    return util.vector3(position.x, position.y - ( CHUNK_SIZE / 2 ), position.z)
+  elseif direction == "south" then
+    return util.vector3(position.x, position.y + ( CHUNK_SIZE  / 2 ), position.z)
+  elseif direction == "east" then
+    return util.vector3(position.x - ( CHUNK_SIZE  / 2 ), position.y, position.z)
+  elseif direction == "west" then
+    return util.vector3(position.x + ( CHUNK_SIZE / 2 ) , position.y, position.z)
   end
 end
 
@@ -126,14 +159,10 @@ local function clearDungeon(createNew, chunksToGenerate)
 
   local numDeleted = 0
 
-  print("Cell currently has: ", numObjects, " objects.")
-
   clearStopFn = time.runRepeatedly(function()
       if numDeleted <= numObjects then
 
         local deleteThisIteration = math.min(DELETE_CHUNKS, numObjects - numDeleted)
-
-        print("Deleting", deleteThisIteration, " objects this iteration")
 
         for index=numDeleted, numDeleted + deleteThisIteration do
           local target = cellObjects[index + 1]
@@ -143,17 +172,34 @@ local function clearDungeon(createNew, chunksToGenerate)
         numDeleted = numDeleted + deleteThisIteration + 1
 
       else
-        print("All objects deleted, cell is clear for paving", numDeleted, numObjects)
         clearStopFn()
         CursorPosition = util.vector3(0, 0, 0)
         UsedChunkPositions = {}
-
-        print("Chunk Data is: ", chunkData)
 
         if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
       end
   end,
     DELETE_DELAY)
+end
+
+local function spawnTransitionCell(direction, position)
+
+  local transitionRoomPosition = getTransitionRoomPosition(direction, position)
+
+  local transitionCellTemplate
+  local transitionCellIndex
+
+  if direction == 'west' or direction == 'east' then
+    transitionCellIndex = math.random(1, #horizontalTransitions)
+    transitionCellTemplate = horizontalTransitions[transitionCellIndex]
+  else
+    transitionCellIndex = math.random(1, #verticalTransitions)
+    transitionCellTemplate = verticalTransitions[transitionCellIndex]
+  end
+
+  generateCell{ targetCell = world.players[1].cell.name,
+                cursorPosition = transitionRoomPosition,  cellId = transitionCellTemplate }
+
 end
 
 local function spawnChunk()
@@ -166,7 +212,7 @@ local function spawnChunk()
 
   local direction, nextPos = getNextAvailableChunkPosition()
 
-  -- print("Next position will be: ", nextPos.x, nextPos.y, ", used direction was: ", direction)
+  spawnTransitionCell(direction, nextPos)
 
   CursorPosition = nextPos
 end
@@ -174,8 +220,6 @@ end
 local GenerateStopFn
 
 local function generateDungeon(chunkData)
-
-  print(chunkData)
 
   table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
 
