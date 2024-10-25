@@ -5,12 +5,96 @@ local util = require('openmw.util')
 local world = require('openmw.world')
 
 local templateCells = {
-  "pd_twisty",
-  "pd_twisty_alt",
-  "pd_zen",
-  "pd_shaft",
-  "pd_labyrinth",
-  "claustro",
+  {
+    cellId = "pd_twisty",
+    edges = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = true,
+      ["west"] = true
+    },
+    barriers = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = false,
+      ["west"] = false
+    },
+  },
+  {
+    cellId = "pd_twisty_alt",
+    edges = {
+      ["north"] = true,
+      ["south"] = true,
+      ["east"] = false,
+      ["west"] = false
+    },
+    barriers = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = false,
+      ["west"] = false
+    },
+  },
+  {
+    cellId = "pd_shaft",
+    edges = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = false,
+      ["west"] = false
+    },
+    barriers = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = false,
+      ["west"] = false
+    },
+  },
+  {
+    cellId = "pd_labyrinth",
+    edges = {
+      ["north"] = true,
+      ["south"] = true,
+      ["east"] = true,
+      ["west"] = true
+    },
+    barriers = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = false,
+      ["west"] = false
+    },
+  },
+  {
+    cellId = "claustro",
+    edges = {
+      ["north"] = true,
+      ["south"] = true,
+      ["east"] = true,
+      ["west"] = true
+    },
+    barriers = {
+      ["north"] = true,
+      ["south"] = true,
+      ["east"] = true,
+      ["west"] = true
+    },
+  },
+  {
+    cellId = "pd_zen",
+    edges = {
+      ["north"] = true,
+      ["south"] = true,
+      ["east"] = true,
+      ["west"] = true
+    },
+    barriers = {
+      ["north"] = false,
+      ["south"] = false,
+      ["east"] = false,
+      ["west"] = false
+    },
+  },
 }
 
 local verticalTransitions = {
@@ -21,6 +105,28 @@ local verticalTransitions = {
 local horizontalTransitions = {
   "pd_connector_ew_1",
   "pd_connector_ew_2",
+}
+
+local edges = {
+  east = {
+    "pd-edge-east",
+  },
+  west = {
+    "pd-edge-west",
+  },
+  north = {
+    "pd-edge-north",
+  },
+  south = {
+    "pd-edge-south",
+  },
+}
+
+local edgeBarriers = {
+  "pd-barrier-1",
+  "pd-barrier-2",
+  "pd-barrier-3",
+  "pd-barrier-4",
 }
 
 local SCALE_FACTOR = 3
@@ -36,6 +142,9 @@ local SPAWN_DELAY = 1 * time.second
 
 local DELETE_CHUNKS = 300
 local DELETE_DELAY = 0.25 * time.second
+
+local MAP_OR_BARRIER_PCT = 60
+local EDGE_SPAWN_CHANCE = 75
 
 local CursorPosition = util.vector3(0, 0, 0)
 
@@ -106,13 +215,13 @@ local function getNextAvailableChunkPosition()
   if #UsedChunkPositions == 0 then
     local direction = getNextChunkDirection()
     local newPosition = getNextChunkPosition(direction, util.vector3(0, 0, 0))
-    table.insert(UsedChunkPositions, newPosition)
+    -- table.insert(UsedChunkPositions, newPosition)
     return direction, newPosition
   end
 
   local positionsCopy = {}
-  for _, pos in ipairs(UsedChunkPositions) do
-    table.insert(positionsCopy, pos)
+  for _, chunkObject in ipairs(UsedChunkPositions) do
+    table.insert(positionsCopy, chunkObject.position)
   end
 
   while #positionsCopy > 0 do
@@ -126,7 +235,8 @@ local function getNextAvailableChunkPosition()
       local newPosition = getNextChunkPosition(direction, usedPosition)
 
       local isUsed = false
-      for _, checkPosition in ipairs(UsedChunkPositions) do
+      for _, chunkObject in ipairs(UsedChunkPositions) do
+        local checkPosition = chunkObject.position
         if newPosition.x == checkPosition.x and newPosition.y == checkPosition.y then
           isUsed = true
           break
@@ -134,7 +244,7 @@ local function getNextAvailableChunkPosition()
       end
 
       if not isUsed then
-        table.insert(UsedChunkPositions, newPosition)
+        -- table.insert(UsedChunkPositions, newPosition)
         return direction, newPosition
       end
     end
@@ -208,21 +318,75 @@ local function positionHasTransition(position)
   return false
 end
 
+
+local function positionHasChunk(position)
+  for _, chunkObject in pairs(UsedChunkPositions) do
+    if position == chunkObject.position then return true end
+  end
+
+  return false
+end
+
+local function randomEdgeCell(direction)
+  return edges[direction][math.random(1, #edges[direction])]
+end
+
+local function randomBarrierCell()
+  return edgeBarriers[math.random(1, #edgeBarriers)]
+end
+
+local function getTemplateCell(cellId)
+  for _, templateObject in ipairs(templateCells) do
+    if cellId == templateObject.cellId then return templateObject end
+  end
+  error("Requested a template cell which doesn't exist: ", cellId)
+end
+
+local function generateEdgeRooms()
+  for _, chunkObject in ipairs(UsedChunkPositions) do
+    print("Generating edges for ", chunkObject.cellId)
+
+    local directions = { "north", "south", "east", "west" }
+
+    for _, direction in pairs(directions) do
+      if math.random(100) <= EDGE_SPAWN_CHANCE then
+        local adjacentChunkPosition = getNextChunkPosition(direction, chunkObject.position)
+
+        if not positionHasChunk(adjacentChunkPosition) then
+
+          local spawnRoomOrBarrier = math.random(100) >= MAP_OR_BARRIER_PCT
+          local targetCell = getTemplateCell(chunkObject.cellId)
+          local transitionRoomPosition = getTransitionRoomPosition(direction, adjacentChunkPosition)
+
+          if spawnRoomOrBarrier and targetCell.edges[direction] then
+            generateCell { cellId = randomEdgeCell(direction),
+              targetCell = world.players[1].cell.name, cursorPosition = transitionRoomPosition }
+          elseif not spawnRoomOrBarrier and targetCell.barriers[direction] then
+            generateCell { cellId = randomBarrierCell(),
+              targetCell = world.players[1].cell.name, cursorPosition = transitionRoomPosition }
+          end
+
+        end
+      end
+    end
+  end
+end
+
 local function generateTransitionRooms()
   positionsWithTransitions[#positionsWithTransitions] = util.vector3(0, 0, 0)
-  for _, position in ipairs(UsedChunkPositions) do
+  for _, chunkObject in ipairs(UsedChunkPositions) do
 
     local directions = { "north", "south", "east", "west" }
 
     for _, direction in pairs(directions) do
 
-      local adjacentChunkPosition = getNextChunkPosition(direction, position)
+      local adjacentChunkPosition = getNextChunkPosition(direction, chunkObject.position)
 
-      for _, adjacentPosition in ipairs(UsedChunkPositions) do
+      for _, adjacentChunkObject in ipairs(UsedChunkPositions) do
 
-        if adjacentPosition == adjacentChunkPosition then
+        if adjacentChunkObject.position == adjacentChunkPosition then
 
-          local transitionRoomPosition = getTransitionRoomPosition(direction, adjacentPosition)
+          local transitionRoomPosition = getTransitionRoomPosition(direction, adjacentChunkObject.position)
 
           if not positionHasTransition(transitionRoomPosition) then
 
@@ -246,11 +410,13 @@ local chunksRemaining
 
 local function spawnChunk(isLastChunk)
 
-  local templateCell = templateCells[math.random(#templateCells)]
+  local templateCell = templateCells[math.random(#templateCells)].cellId
 
   local targetCell = world.players[1].cell.name
 
   generateCell{ cellId = templateCell, targetCell = targetCell, cursorPosition = CursorPosition }
+
+  UsedChunkPositions[#UsedChunkPositions + 1] = { position = CursorPosition, cellId = templateCell }
 
   if isLastChunk then return end
 
@@ -262,6 +428,7 @@ local function generateTimedChunk()
   if chunksRemaining <= 0 then
     GenerateStopFn()
     generateTransitionRooms()
+    generateEdgeRooms()
   end
 
   local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
@@ -275,7 +442,7 @@ end
 
 local function generateDungeon(chunkData)
 
-  table.insert(UsedChunkPositions, util.vector3(0, 0, 0))
+  -- table.insert(UsedChunkPositions, { position = util.vector3(0, 0, 0)})
 
   chunksRemaining = chunkData.chunksToGenerate
 
