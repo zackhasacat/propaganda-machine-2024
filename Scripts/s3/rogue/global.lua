@@ -403,6 +403,8 @@ local function generateTransitionRooms()
 
     end
   end
+
+  core.sendGlobalEvent('generateEdgeRooms')
 end
 
 local GenerateStopFn
@@ -435,15 +437,11 @@ local function generateTimedChunk()
 
   if chunksRemaining <= 0 then
     GenerateStopFn()
-    generateTransitionRooms()
-    generateEdgeRooms()
+    core.sendGlobalEvent('generateTransitionRooms')
   end
 end
 
 local function generateDungeon(chunkData)
-
-  -- table.insert(UsedChunkPositions, { position = util.vector3(0, 0, 0)})
-
   chunksRemaining = chunkData.chunksToGenerate
 
   GenerateStopFn = time.runRepeatedly(generateTimedChunk, SPAWN_DELAY)
@@ -456,5 +454,7 @@ return {
   },
   eventHandlers = {
     generateDungeon = generateDungeon,
+    generateEdgeRooms = generateEdgeRooms,
+    generateTransitionRooms = generateTransitionRooms,
   }
 }
