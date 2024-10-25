@@ -425,12 +425,6 @@ local function spawnChunk(isLastChunk)
 end
 
 local function generateTimedChunk()
-  if chunksRemaining <= 0 then
-    GenerateStopFn()
-    generateTransitionRooms()
-    generateEdgeRooms()
-  end
-
   local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
 
   for chunkThisBatch = 1, math.min(chunksRemaining, BATCH_MAX) do
@@ -438,6 +432,12 @@ local function generateTimedChunk()
   end
 
   chunksRemaining = chunksRemaining - chunksThisBatch
+
+  if chunksRemaining <= 0 then
+    GenerateStopFn()
+    generateTransitionRooms()
+    generateEdgeRooms()
+  end
 end
 
 local function generateDungeon(chunkData)
