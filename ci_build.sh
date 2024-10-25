@@ -107,4 +107,4 @@ done
 
 mv "$final_omwaddon" "$final_plugin_name".omwaddon
 
-zip -r9 "$zip_name" "$final_plugin_name".omwaddon "${directories_to_zip[@]}"
+zip -r9 "$zip_name" "$final_plugin_name".omwscripts "$final_plugin_name".omwaddon "${directories_to_zip[@]}"
