@@ -4,136 +4,7 @@ local types = require('openmw.types')
 local util = require('openmw.util')
 local world = require('openmw.world')
 
-local templateCells = {
-  {
-    cellId = "pd_twisty",
-    edges = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "pd_twisty_alt",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = false,
-      ["west"] = false
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "pd_shaft",
-    edges = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "pd_labyrinth",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "claustro",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-  },
-  {
-    cellId = "pd_zen",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-}
-
-local verticalTransitions = {
-  "pd_connector_ns_1",
-  "pd_connector_ns_2",
-}
-
-local horizontalTransitions = {
-  "pd_connector_ew_1",
-  "pd_connector_ew_2",
-}
-
-local edges = {
-  east = {
-    "pd-edge-east",
-  },
-  west = {
-    "pd-edge-west",
-  },
-  north = {
-    "pd-edge-north",
-  },
-  south = {
-    "pd-edge-south",
-  },
-}
-
-local edgeBarriers = {
-  "pd-barrier-1",
-  "pd-barrier-2",
-  "pd-barrier-3",
-  "pd-barrier-4",
-}
-
-local SCALE_FACTOR = 3
-
-local TRANSITION_SIZE = 512 * SCALE_FACTOR
-local ROOM_SIZE = 2048 * SCALE_FACTOR
-local CHUNK_SIZE = TRANSITION_SIZE + ROOM_SIZE
+local procGenData = require('Scripts.s3.rogue.procGenData')
 
 local NUM_CHUNKS = 500
 local BATCH_MAX = 25
@@ -180,13 +51,13 @@ local function getNextChunkPosition(direction, position)
   assert(direction == "north" or direction == "south" or direction == "east" or direction == "west", "Invalid direction provided: " .. direction)
 
   if direction == "north" then
-    return util.vector3(position.x, position.y + CHUNK_SIZE, position.z)
+    return util.vector3(position.x, position.y + procGenData.CHUNK_SIZE, position.z)
   elseif direction == "south" then
-    return util.vector3(position.x, position.y - CHUNK_SIZE, position.z)
+    return util.vector3(position.x, position.y - procGenData.CHUNK_SIZE, position.z)
   elseif direction == "east" then
-    return util.vector3(position.x + CHUNK_SIZE, position.y, position.z)
+    return util.vector3(position.x + procGenData.CHUNK_SIZE, position.y, position.z)
   elseif direction == "west" then
-    return util.vector3(position.x - CHUNK_SIZE, position.y, position.z)
+    return util.vector3(position.x - procGenData.CHUNK_SIZE, position.y, position.z)
   end
 end
 
@@ -198,13 +69,13 @@ local function getTransitionRoomPosition(direction, position)
   assert(direction == "north" or direction == "south" or direction == "east" or direction == "west", "Invalid direction provided: " .. direction)
 
   if direction == "north" then
-    return util.vector3(position.x, position.y - ( CHUNK_SIZE / 2 ), position.z)
+    return util.vector3(position.x, position.y - ( procGenData.CHUNK_SIZE / 2 ), position.z)
   elseif direction == "south" then
-    return util.vector3(position.x, position.y + ( CHUNK_SIZE  / 2 ), position.z)
+    return util.vector3(position.x, position.y + ( procGenData.CHUNK_SIZE  / 2 ), position.z)
   elseif direction == "east" then
-    return util.vector3(position.x - ( CHUNK_SIZE  / 2 ), position.y, position.z)
+    return util.vector3(position.x - ( procGenData.CHUNK_SIZE  / 2 ), position.y, position.z)
   elseif direction == "west" then
-    return util.vector3(position.x + ( CHUNK_SIZE / 2 ) , position.y, position.z)
+    return util.vector3(position.x + ( procGenData.CHUNK_SIZE / 2 ) , position.y, position.z)
   end
 end
 
@@ -215,7 +86,6 @@ local function getNextAvailableChunkPosition()
   if #UsedChunkPositions == 0 then
     local direction = getNextChunkDirection()
     local newPosition = getNextChunkPosition(direction, util.vector3(0, 0, 0))
-    -- table.insert(UsedChunkPositions, newPosition)
     return direction, newPosition
   end
 
@@ -244,7 +114,6 @@ local function getNextAvailableChunkPosition()
       end
 
       if not isUsed then
-        -- table.insert(UsedChunkPositions, newPosition)
         return direction, newPosition
       end
     end
@@ -299,11 +168,11 @@ local function randomTransitionCell(direction)
   local transitionCellIndex
 
   if direction == 'west' or direction == 'east' then
-    transitionCellIndex = math.random(1, #horizontalTransitions)
-    transitionCellTemplate = horizontalTransitions[transitionCellIndex]
+    transitionCellIndex = math.random(1, #procGenData.transitions.horizontal)
+    transitionCellTemplate = procGenData.transitions.horizontal[transitionCellIndex]
   else
-    transitionCellIndex = math.random(1, #verticalTransitions)
-    transitionCellTemplate = verticalTransitions[transitionCellIndex]
+    transitionCellIndex = math.random(1, #procGenData.transitions.vertical)
+    transitionCellTemplate = procGenData.transitions.vertical[transitionCellIndex]
   end
 
   return transitionCellTemplate
@@ -328,15 +197,15 @@ local function positionHasChunk(position)
 end
 
 local function randomEdgeCell(direction)
-  return edges[direction][math.random(1, #edges[direction])]
+  return procGenData.edges[direction][math.random(1, #procGenData.edges[direction])]
 end
 
 local function randomBarrierCell()
-  return edgeBarriers[math.random(1, #edgeBarriers)]
+  return procGenData.edgeBarriers[math.random(1, #procGenData.edgeBarriers)]
 end
 
 local function getTemplateCell(cellId)
-  for _, templateObject in ipairs(templateCells) do
+  for _, templateObject in ipairs(procGenData.templateCells) do
     if cellId == templateObject.cellId then return templateObject end
   end
   error("Requested a template cell which doesn't exist: ", cellId)
@@ -344,7 +213,6 @@ end
 
 local function generateEdgeRooms()
   for _, chunkObject in ipairs(UsedChunkPositions) do
-    print("Generating edges for ", chunkObject.cellId)
 
     local directions = { "north", "south", "east", "west" }
 
@@ -412,7 +280,7 @@ local chunksRemaining
 
 local function spawnChunk(isLastChunk)
 
-  local templateCell = templateCells[math.random(#templateCells)].cellId
+  local templateCell = procGenData.templateCells[math.random(#procGenData.templateCells)].cellId
 
   local targetCell = world.players[1].cell.name
 
