@@ -5,6 +5,7 @@ local util = require('openmw.util')
 local world = require('openmw.world')
 
 local procGenData = require('Scripts.s3.rogue.procGenData')
+local szudzik = require('Scripts.s3.rogue.szudzik')
 
 local NUM_CHUNKS = 500
 local BATCH_MAX = 25
@@ -19,7 +20,13 @@ local EDGE_SPAWN_CHANCE = 75
 
 local CursorPosition = util.vector3(0, 0, 0)
 
+local totalChunks
 local UsedChunkPositions = {}
+
+local visitedChunks = {}
+
+local numChunksVisited = 0
+local prevChunkCoords
 
 --- Generates a new cell based on the data from an existing cell.
 --- Stores the used chunk position in a table so it can't be reused.
@@ -133,7 +140,7 @@ local function clearDungeon(createNew, chunksToGenerate)
   }
 
   if numObjects == 0 then
-    if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
+    if createNew == true then core.sendGlobalEvent('s3_Rogue_generateDungeon', chunkData) end
     return
   end
 
@@ -156,8 +163,11 @@ local function clearDungeon(createNew, chunksToGenerate)
         CursorPosition = util.vector3(0, 0, 0)
         positionsWithTransitions = {}
         UsedChunkPositions = {}
+        visitedChunks = {}
+        numChunksVisited = 0
+        prevChunkCoords = nil
 
-        if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
+        if createNew == true then core.sendGlobalEvent('s3_Rogue_generateDungeon', chunkData) end
       end
   end,
     DELETE_DELAY)
@@ -178,7 +188,6 @@ local function randomTransitionCell(direction)
   return transitionCellTemplate
 end
 
-
 local function positionHasTransition(position)
   for _, usedPosition in pairs(positionsWithTransitions) do
     if position == usedPosition then return true end
@@ -186,7 +195,6 @@ local function positionHasTransition(position)
 
   return false
 end
-
 
 local function positionHasChunk(position)
   for _, chunkObject in pairs(UsedChunkPositions) do
@@ -272,7 +280,7 @@ local function generateTransitionRooms()
     end
   end
 
-  core.sendGlobalEvent('generateEdgeRooms')
+  core.sendGlobalEvent('s3_Rogue_generateEdgeRooms')
 end
 
 local GenerateStopFn
@@ -305,24 +313,80 @@ local function generateTimedChunk()
 
   if chunksRemaining <= 0 then
     GenerateStopFn()
-    core.sendGlobalEvent('generateTransitionRooms')
+    core.sendGlobalEvent('s3_Rogue_generateTransitionRooms')
   end
 end
 
 local function generateDungeon(chunkData)
-  chunksRemaining = chunkData.chunksToGenerate
+  totalChunks = chunkData.chunksToGenerate or procGenData.NUM_CHUNKS
+  chunksRemaining = totalChunks
 
   GenerateStopFn = time.runRepeatedly(generateTimedChunk, SPAWN_DELAY)
 end
 
+local function hasVisitedChunk(szudzikCoord)
+  assert(szudzikCoord ~= nil, "Cannot check grid coordinates that do not exist!")
+  return visitedChunks[szudzikCoord] ~= nil
+end
+
+local function markChunkAsVisited(szudzikCoord)
+  assert(visitedChunks[szudzikCoord] == nil,
+         "Chunk should never be marked as visited more than once")
+
+  local originalX, originalY = szudzik.unpair(szudzikCoord)
+
+  local chunkCoords = util.vector3(originalX, originalY, 0) * procGenData.CHUNK_SIZE
+
+  visitedChunks[szudzikCoord] = true
+
+  numChunksVisited = numChunksVisited + 1
+end
+
+local function getNearestChunkPosition(pos)
+  local chunkPos = pos.xy / (procGenData.CHUNK_SIZE)
+  return szudzik.getIndex(util.round(chunkPos.x), util.round(chunkPos.y))
+end
+
 return {
-  interfaceName = "s3_Rogue",
+  interfaceName = "s3_Rogue_G",
   interface = {
     clearDungeon = clearDungeon,
+    procGenData = procGenData,
+  },
+  engineHandlers = {
+    onSave = function()
+      return {
+        totalChunks = totalChunks,
+        visitedChunks = visitedChunks,
+        numChunksVisited = numChunksVisited,
+      }
+    end,
+    onLoad = function(state)
+      totalChunks = state.totalChunks or procGenData.NUM_CHUNKS
+      visitedChunks = state.visitedChunks or {}
+      numChunksVisited = state.numChunksVisited or 0
+    end,
+    onUpdate = function(_dt)
+      for index, player in ipairs(world.players) do
+
+        local szudzikCoord = getNearestChunkPosition(player.position)
+        if not hasVisitedChunk(szudzikCoord) then markChunkAsVisited(szudzikCoord) end
+
+        if not prevChunkCoords then
+          print(string.format("Player %d entered the dungeon at (Szudzik) %d", index, szudzikCoord))
+        elseif prevChunkCoords ~= szudzikCoord then
+          print(string.format("Player %d moved to (szudzik) chunk %d from %d, dungeon is %.02f%% complete", index,
+                              szudzikCoord, prevChunkCoords, numChunksVisited / totalChunks))
+        end
+
+        prevChunkCoords = szudzikCoord
+
+      end
+    end,
   },
   eventHandlers = {
-    generateDungeon = generateDungeon,
-    generateEdgeRooms = generateEdgeRooms,
-    generateTransitionRooms = generateTransitionRooms,
+    s3_Rogue_generateDungeon = generateDungeon,
+    s3_Rogue_generateEdgeRooms = generateEdgeRooms,
+    s3_Rogue_generateTransitionRooms = generateTransitionRooms,
   }
 }
