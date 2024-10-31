@@ -4,136 +4,8 @@ local types = require('openmw.types')
 local util = require('openmw.util')
 local world = require('openmw.world')
 
-local templateCells = {
-  {
-    cellId = "pd_twisty",
-    edges = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "pd_twisty_alt",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = false,
-      ["west"] = false
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "pd_shaft",
-    edges = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "pd_labyrinth",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-  {
-    cellId = "claustro",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-  },
-  {
-    cellId = "pd_zen",
-    edges = {
-      ["north"] = true,
-      ["south"] = true,
-      ["east"] = true,
-      ["west"] = true
-    },
-    barriers = {
-      ["north"] = false,
-      ["south"] = false,
-      ["east"] = false,
-      ["west"] = false
-    },
-  },
-}
-
-local verticalTransitions = {
-  "pd_connector_ns_1",
-  "pd_connector_ns_2",
-}
-
-local horizontalTransitions = {
-  "pd_connector_ew_1",
-  "pd_connector_ew_2",
-}
-
-local edges = {
-  east = {
-    "pd-edge-east",
-  },
-  west = {
-    "pd-edge-west",
-  },
-  north = {
-    "pd-edge-north",
-  },
-  south = {
-    "pd-edge-south",
-  },
-}
-
-local edgeBarriers = {
-  "pd-barrier-1",
-  "pd-barrier-2",
-  "pd-barrier-3",
-  "pd-barrier-4",
-}
-
-local SCALE_FACTOR = 3
-
-local TRANSITION_SIZE = 512 * SCALE_FACTOR
-local ROOM_SIZE = 2048 * SCALE_FACTOR
-local CHUNK_SIZE = TRANSITION_SIZE + ROOM_SIZE
+local procGenData = require('Scripts.s3.rogue.procGenData')
+local szudzik = require('Scripts.s3.rogue.szudzik')
 
 local NUM_CHUNKS = 500
 local BATCH_MAX = 25
@@ -148,7 +20,13 @@ local EDGE_SPAWN_CHANCE = 75
 
 local CursorPosition = util.vector3(0, 0, 0)
 
+local totalChunks
 local UsedChunkPositions = {}
+
+local visitedChunks = {}
+
+local numChunksVisited = 0
+local prevChunkCoords
 
 --- Generates a new cell based on the data from an existing cell.
 --- Stores the used chunk position in a table so it can't be reused.
@@ -180,13 +58,13 @@ local function getNextChunkPosition(direction, position)
   assert(direction == "north" or direction == "south" or direction == "east" or direction == "west", "Invalid direction provided: " .. direction)
 
   if direction == "north" then
-    return util.vector3(position.x, position.y + CHUNK_SIZE, position.z)
+    return util.vector3(position.x, position.y + procGenData.CHUNK_SIZE, position.z)
   elseif direction == "south" then
-    return util.vector3(position.x, position.y - CHUNK_SIZE, position.z)
+    return util.vector3(position.x, position.y - procGenData.CHUNK_SIZE, position.z)
   elseif direction == "east" then
-    return util.vector3(position.x + CHUNK_SIZE, position.y, position.z)
+    return util.vector3(position.x + procGenData.CHUNK_SIZE, position.y, position.z)
   elseif direction == "west" then
-    return util.vector3(position.x - CHUNK_SIZE, position.y, position.z)
+    return util.vector3(position.x - procGenData.CHUNK_SIZE, position.y, position.z)
   end
 end
 
@@ -198,13 +76,13 @@ local function getTransitionRoomPosition(direction, position)
   assert(direction == "north" or direction == "south" or direction == "east" or direction == "west", "Invalid direction provided: " .. direction)
 
   if direction == "north" then
-    return util.vector3(position.x, position.y - ( CHUNK_SIZE / 2 ), position.z)
+    return util.vector3(position.x, position.y - ( procGenData.CHUNK_SIZE / 2 ), position.z)
   elseif direction == "south" then
-    return util.vector3(position.x, position.y + ( CHUNK_SIZE  / 2 ), position.z)
+    return util.vector3(position.x, position.y + ( procGenData.CHUNK_SIZE  / 2 ), position.z)
   elseif direction == "east" then
-    return util.vector3(position.x - ( CHUNK_SIZE  / 2 ), position.y, position.z)
+    return util.vector3(position.x - ( procGenData.CHUNK_SIZE  / 2 ), position.y, position.z)
   elseif direction == "west" then
-    return util.vector3(position.x + ( CHUNK_SIZE / 2 ) , position.y, position.z)
+    return util.vector3(position.x + ( procGenData.CHUNK_SIZE / 2 ) , position.y, position.z)
   end
 end
 
@@ -215,7 +93,6 @@ local function getNextAvailableChunkPosition()
   if #UsedChunkPositions == 0 then
     local direction = getNextChunkDirection()
     local newPosition = getNextChunkPosition(direction, util.vector3(0, 0, 0))
-    -- table.insert(UsedChunkPositions, newPosition)
     return direction, newPosition
   end
 
@@ -244,7 +121,6 @@ local function getNextAvailableChunkPosition()
       end
 
       if not isUsed then
-        -- table.insert(UsedChunkPositions, newPosition)
         return direction, newPosition
       end
     end
@@ -264,7 +140,7 @@ local function clearDungeon(createNew, chunksToGenerate)
   }
 
   if numObjects == 0 then
-    if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
+    if createNew == true then core.sendGlobalEvent('s3_Rogue_generateDungeon', chunkData) end
     return
   end
 
@@ -287,8 +163,11 @@ local function clearDungeon(createNew, chunksToGenerate)
         CursorPosition = util.vector3(0, 0, 0)
         positionsWithTransitions = {}
         UsedChunkPositions = {}
+        visitedChunks = {}
+        numChunksVisited = 0
+        prevChunkCoords = nil
 
-        if createNew == true then core.sendGlobalEvent('generateDungeon', chunkData) end
+        if createNew == true then core.sendGlobalEvent('s3_Rogue_generateDungeon', chunkData) end
       end
   end,
     DELETE_DELAY)
@@ -299,16 +178,15 @@ local function randomTransitionCell(direction)
   local transitionCellIndex
 
   if direction == 'west' or direction == 'east' then
-    transitionCellIndex = math.random(1, #horizontalTransitions)
-    transitionCellTemplate = horizontalTransitions[transitionCellIndex]
+    transitionCellIndex = math.random(1, #procGenData.transitions.horizontal)
+    transitionCellTemplate = procGenData.transitions.horizontal[transitionCellIndex]
   else
-    transitionCellIndex = math.random(1, #verticalTransitions)
-    transitionCellTemplate = verticalTransitions[transitionCellIndex]
+    transitionCellIndex = math.random(1, #procGenData.transitions.vertical)
+    transitionCellTemplate = procGenData.transitions.vertical[transitionCellIndex]
   end
 
   return transitionCellTemplate
 end
-
 
 local function positionHasTransition(position)
   for _, usedPosition in pairs(positionsWithTransitions) do
@@ -317,7 +195,6 @@ local function positionHasTransition(position)
 
   return false
 end
-
 
 local function positionHasChunk(position)
   for _, chunkObject in pairs(UsedChunkPositions) do
@@ -328,15 +205,15 @@ local function positionHasChunk(position)
 end
 
 local function randomEdgeCell(direction)
-  return edges[direction][math.random(1, #edges[direction])]
+  return procGenData.edges[direction][math.random(1, #procGenData.edges[direction])]
 end
 
 local function randomBarrierCell()
-  return edgeBarriers[math.random(1, #edgeBarriers)]
+  return procGenData.edgeBarriers[math.random(1, #procGenData.edgeBarriers)]
 end
 
 local function getTemplateCell(cellId)
-  for _, templateObject in ipairs(templateCells) do
+  for _, templateObject in ipairs(procGenData.templateCells) do
     if cellId == templateObject.cellId then return templateObject end
   end
   error("Requested a template cell which doesn't exist: ", cellId)
@@ -344,7 +221,6 @@ end
 
 local function generateEdgeRooms()
   for _, chunkObject in ipairs(UsedChunkPositions) do
-    print("Generating edges for ", chunkObject.cellId)
 
     local directions = { "north", "south", "east", "west" }
 
@@ -403,6 +279,8 @@ local function generateTransitionRooms()
 
     end
   end
+
+  core.sendGlobalEvent('s3_Rogue_generateEdgeRooms')
 end
 
 local GenerateStopFn
@@ -410,7 +288,7 @@ local chunksRemaining
 
 local function spawnChunk(isLastChunk)
 
-  local templateCell = templateCells[math.random(#templateCells)].cellId
+  local templateCell = procGenData.templateCells[math.random(#procGenData.templateCells)].cellId
 
   local targetCell = world.players[1].cell.name
 
@@ -425,12 +303,6 @@ local function spawnChunk(isLastChunk)
 end
 
 local function generateTimedChunk()
-  if chunksRemaining <= 0 then
-    GenerateStopFn()
-    generateTransitionRooms()
-    generateEdgeRooms()
-  end
-
   local chunksThisBatch = math.min(chunksRemaining, BATCH_MAX)
 
   for chunkThisBatch = 1, math.min(chunksRemaining, BATCH_MAX) do
@@ -438,23 +310,83 @@ local function generateTimedChunk()
   end
 
   chunksRemaining = chunksRemaining - chunksThisBatch
+
+  if chunksRemaining <= 0 then
+    GenerateStopFn()
+    core.sendGlobalEvent('s3_Rogue_generateTransitionRooms')
+  end
 end
 
 local function generateDungeon(chunkData)
-
-  -- table.insert(UsedChunkPositions, { position = util.vector3(0, 0, 0)})
-
-  chunksRemaining = chunkData.chunksToGenerate
+  totalChunks = chunkData.chunksToGenerate or procGenData.NUM_CHUNKS
+  chunksRemaining = totalChunks
 
   GenerateStopFn = time.runRepeatedly(generateTimedChunk, SPAWN_DELAY)
 end
 
+local function hasVisitedChunk(szudzikCoord)
+  assert(szudzikCoord ~= nil, "Cannot check grid coordinates that do not exist!")
+  return visitedChunks[szudzikCoord] ~= nil
+end
+
+local function markChunkAsVisited(szudzikCoord)
+  assert(visitedChunks[szudzikCoord] == nil,
+         "Chunk should never be marked as visited more than once")
+
+  local originalX, originalY = szudzik.unpair(szudzikCoord)
+
+  local chunkCoords = util.vector3(originalX, originalY, 0) * procGenData.CHUNK_SIZE
+
+  visitedChunks[szudzikCoord] = true
+
+  numChunksVisited = numChunksVisited + 1
+end
+
+local function getNearestChunkPosition(pos)
+  local chunkPos = pos.xy / (procGenData.CHUNK_SIZE)
+  return szudzik.getIndex(util.round(chunkPos.x), util.round(chunkPos.y))
+end
+
 return {
-  interfaceName = "s3_Rogue",
+  interfaceName = "s3_Rogue_G",
   interface = {
     clearDungeon = clearDungeon,
+    procGenData = procGenData,
+  },
+  engineHandlers = {
+    onSave = function()
+      return {
+        totalChunks = totalChunks,
+        visitedChunks = visitedChunks,
+        numChunksVisited = numChunksVisited,
+      }
+    end,
+    onLoad = function(state)
+      totalChunks = state.totalChunks or procGenData.NUM_CHUNKS
+      visitedChunks = state.visitedChunks or {}
+      numChunksVisited = state.numChunksVisited or 0
+    end,
+    onUpdate = function(_dt)
+      for index, player in ipairs(world.players) do
+
+        local szudzikCoord = getNearestChunkPosition(player.position)
+        if not hasVisitedChunk(szudzikCoord) then markChunkAsVisited(szudzikCoord) end
+
+        if not prevChunkCoords then
+          print(string.format("Player %d entered the dungeon at (Szudzik) %d", index, szudzikCoord))
+        elseif prevChunkCoords ~= szudzikCoord then
+          print(string.format("Player %d moved to (szudzik) chunk %d from %d, dungeon is %.02f%% complete", index,
+                              szudzikCoord, prevChunkCoords, numChunksVisited / totalChunks))
+        end
+
+        prevChunkCoords = szudzikCoord
+
+      end
+    end,
   },
   eventHandlers = {
-    generateDungeon = generateDungeon,
+    s3_Rogue_generateDungeon = generateDungeon,
+    s3_Rogue_generateEdgeRooms = generateEdgeRooms,
+    s3_Rogue_generateTransitionRooms = generateTransitionRooms,
   }
 }
