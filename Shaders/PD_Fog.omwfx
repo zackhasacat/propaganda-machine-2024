@@ -33,7 +33,7 @@ uniform_float uFogHeight {
 }
 
 uniform_float uFogDensity {
-	default = 0.016;
+	default = 0.009;
 	min = 0.0;
 	max = 1.0;
 	step = 0.001;
