@@ -164,21 +164,21 @@ fragment main {
 		}
 
 		// calculate fog
-		float a = (uFogDensity) / 10000.0;
-		vec3 V = viewPos - worldPos;
+		float density = (uFogDensity) / 10000.0;
+		vec3 view = viewPos - worldPos;
 		float F_dot_P = dot(F, worldPos);
 		float F_dot_C = dot(F, viewPos);
 		float k = clamp(-sign(F_dot_C), 0.0, 1.0);
 		
-		vec3 aV = (a / 2.0) * V;
+		vec3 aV = (density / 2.0) * view;
 		float c1 = k * (F_dot_P + F_dot_C);
 		float c2 = (1.0 - 2.0 * k) * F_dot_P;
-		float F_dot_V = dot(F, V);
+		float F_dot_V = dot(F, view);
 		
 		float g = min(c2, 0.0);
 		g = -length(aV) * (c1 - g * g / abs(F_dot_V));
 		
-		float fogFactor = (1.0 - clamp(exp2(-g), 0.0, 1.0));
+		float fogFactor = (1.0 - exp2(-g)); //(1.0 - clamp(exp2(-g), 0.0, 1.0)); clamping it somehow causes streak artifacts, I have no idea why, todd bless
 		
 		
 		vec2 ditherCoord = omw_TexCoord.xy * omw.resolution;
