@@ -30,6 +30,7 @@ uniform_float uFogHeight {
 	step = 10.0;
 	display_name = "Fog Start Height";
 	description = "Height that the fog starts from";
+	static = false;
 }
 
 uniform_float uFogDensity {
@@ -39,6 +40,7 @@ uniform_float uFogDensity {
 	step = 0.001;
 	display_name = "Fog Density";
 	description = "Density of the fog, affects falloff";
+	static = false;
 }
 
 uniform_bool uReplaceSun {
@@ -233,5 +235,6 @@ technique {
     passes = main;
     version = "1.0";
     author = "Epoch";
-	flags = disable_sunglare;
+	flags = disable_sunglare, hidden;
+	dynamic = true;
 }
