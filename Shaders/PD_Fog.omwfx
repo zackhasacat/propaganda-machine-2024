@@ -176,11 +176,11 @@ fragment main {
 		float c1 = k * (F_dot_P + F_dot_C);
 		float c2 = (1.0 - 2.0 * k) * F_dot_P;
 		float F_dot_V = dot(F, view);
-		
+
 		float g = min(c2, 0.0);
-		g = -length(aV) * (c1 - g * g / abs(F_dot_V));
+		g = -length(aV) * (c1 - g * g / (abs(F_dot_V) + 0.0001)); // add bias to not divide by zero
 		
-		float fogFactor = (1.0 - exp2(-g)); //(1.0 - clamp(exp2(-g), 0.0, 1.0)); clamping it somehow causes streak artifacts, I have no idea why, todd bless
+		float fogFactor = (1.0 - clamp(exp2(-g), 0.0, 1.0));
 		
 		
 		vec2 ditherCoord = omw_TexCoord.xy * omw.resolution;
