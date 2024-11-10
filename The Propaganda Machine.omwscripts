@@ -1,1 +1,2 @@
 GLOBAL: Scripts/s3/rogue/global.lua
+PLAYER: Scripts/zhac/tfor_player.lua
